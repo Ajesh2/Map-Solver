@@ -66,9 +66,7 @@ def createMaze():
                     Maze[tablet[test][0] - 1][tablet[test][1]] = 4
 
                 tablet = []
-    for i in range(20):
-        print(Maze[i])
-        print('\n')
+
     return Maze
 
 def decodeMaze(maze):
