@@ -2,7 +2,7 @@
 It is a simple program which will be used to solve maps/mazes as it is a necessity in everyones day to day life to go from point A to point B without wasting time on inefficient routes
 
 ## How to Use
-- Downlaod the latest release package.  
+- Downlaod the [latest release package](https://github.com/Ajesh2/Map-Solver/releases/latest).  
 - Press left mouse click anywhere to set Green position.  
 - Press right mouse click anywhere to set Green position.  
 
