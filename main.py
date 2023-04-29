@@ -1,12 +1,14 @@
 #modules inclusion
 from pyray import *
 import random
+from astar.search import AStar
 
 #variables
 backgroundColor = Color(33,34,44,255)
 buildingColor   = Color(98,114,164,255)
 buildingSize    = 10
-
+pointA          = (0, 0)
+pointB          = (0, 0)
 #basic initiation
 set_trace_log_level(LOG_NONE)
 ScreenWidth,ScreenHeight = 810,410
@@ -25,7 +27,8 @@ def showTile(Map):
         for j in range(81):
             if Map[i][j]:
                 draw_rectangle(j*buildingSize, i*buildingSize, buildingSize, buildingSize, buildingColor)
-                #draw_rectangle_lines(j*buildingSize, i*buildingSize, buildingSize, buildingSize, Color(98,114,164,255))
+                if (is_key_down(KEY_SPACE)):
+                    draw_rectangle_lines(j*buildingSize, i*buildingSize, buildingSize, buildingSize, Color(98,114,164,255))
 
 def createMaze():
     Maze = []
@@ -96,12 +99,58 @@ def decodeMaze(maze):
     decoded.insert(0,temp)
     return decoded
 
+def setPositionA(maz):
+    x,y = random.randint(0,80),random.randint(0,40)
+    global pointA
+    if maz[y][x] == 1:
+        setPositionA(maz)
+    else:
+        pointA = (y,x)
+
+def setPositionB(maz):
+    x,y = random.randint(0,80),random.randint(0,40)
+    global pointB
+    if maz[y][x] == 1:
+        setPositionB(maz)
+    else:
+        pointB = (y,x)
+
+def drawPoint():
+    draw_circle(int(pointA[1]*10 + 5), int(pointA[0]*10 + 5), 5,Color(100,189,220,255))
+    draw_circle(int(pointB[1]*10 + 5), int(pointB[0]*10 + 5), 5,Color(73,246,124,255))
+
+def drawPath(path):
+    for i in range(len(path)):
+        draw_circle(int(path[i][1]*10 + 5), int(path[i][0]*10 + 5), 2,PINK)
 
 
 areaMap = decodeMaze(createMaze())
+setPositionA(areaMap)
+setPositionB(areaMap)
+path = AStar(areaMap).search(pointA,pointB)
+
+def movePoint():
+    global pointB
+    global pointA
+    global path
+    if is_mouse_button_down(MOUSE_BUTTON_LEFT):
+        if int(get_mouse_y()/10) < 41 and int(get_mouse_x()/10) < 81 :
+            if areaMap[int(get_mouse_y()/10)][int(get_mouse_x()/10)] == 0:
+                pointB = (int(get_mouse_y()/10),int(get_mouse_x()/10))
+                path = AStar(areaMap).search(pointA,pointB)
+    if is_mouse_button_down(MOUSE_BUTTON_RIGHT):
+        if int(get_mouse_y()/10) < 41 and int(get_mouse_x()/10) < 81 :
+            if areaMap[int(get_mouse_y()/10)][int(get_mouse_x()/10)] == 0:
+                pointA = (int(get_mouse_y()/10),int(get_mouse_x()/10))
+                path = AStar(areaMap).search(pointA,pointB)
+
+
 while not window_should_close():
     begin_drawing()
     clear_background(backgroundColor)
     showTile(areaMap)
+    drawPath(path)
+    drawPoint()
+    movePoint()
     end_drawing()
 close_window()
